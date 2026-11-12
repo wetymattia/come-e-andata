@@ -1,0 +1,13 @@
+{
+  "name": "come-e-andata",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PWA per valutare ogni mattina la giornata appena passata (verde, giallo, rosso).",
+  "scripts": {
+    "start": "npx --yes serve public -l 8080"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^10.7.13",
+    "web-push": "^3.6.7"
+  }
+}

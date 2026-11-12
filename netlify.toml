@@ -1,0 +1,18 @@
+# Configurazione Netlify
+[build]
+  publish = "public"            # cartella con i file dell'app
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Il service worker non deve mai restare in cache, così gli aggiornamenti arrivano subito
+[[headers]]
+  for = "/service-worker.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Content-Type = "application/manifest+json"

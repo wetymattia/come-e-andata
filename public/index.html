@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Com'è andata?</title>
+  <meta name="description" content="Valuta ogni giorno la giornata appena passata: verde, giallo o rosso.">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#f6f5f2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121316" media="(prefers-color-scheme: dark)">
+
+  <!-- iPhone / iPad: aspetto da app nativa -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Com'è andata?">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <main class="contenuto">
+
+      <!-- ============ OGGI ============ -->
+      <section id="vista-oggi" class="vista" data-vista="oggi">
+        <header class="testata">
+          <p class="saluto" id="saluto">Buongiorno</p>
+          <h1 class="domanda">Come valuti la giornata che hai appena passato?</h1>
+          <p class="data-giorno" id="data-ieri">—</p>
+        </header>
+
+        <div class="scelte" id="scelte" role="group" aria-label="Valutazione della giornata">
+          <button class="scelta scelta--verde" data-valore="verde" type="button">
+            <span class="scelta__pallino" aria-hidden="true"></span>
+            <span class="scelta__testo">
+              <span class="scelta__titolo">Positiva</span>
+              <span class="scelta__sotto">È stata una bella giornata</span>
+            </span>
+          </button>
+          <button class="scelta scelta--giallo" data-valore="giallo" type="button">
+            <span class="scelta__pallino" aria-hidden="true"></span>
+            <span class="scelta__testo">
+              <span class="scelta__titolo">Normale</span>
+              <span class="scelta__sotto">Niente di speciale</span>
+            </span>
+          </button>
+          <button class="scelta scelta--rosso" data-valore="rosso" type="button">
+            <span class="scelta__pallino" aria-hidden="true"></span>
+            <span class="scelta__testo">
+              <span class="scelta__titolo">Negativa</span>
+              <span class="scelta__sotto">Una giornata storta</span>
+            </span>
+          </button>
+        </div>
+
+        <button class="btn-conferma" id="btn-conferma" type="button" hidden>
+          <span class="btn-conferma__testo" id="btn-conferma-testo">Conferma</span>
+          <span class="btn-conferma__sotto" id="btn-conferma-sotto"></span>
+        </button>
+
+        <p class="esito" id="esito" aria-live="polite"></p>
+        <button class="link-rivedi" id="btn-rivedi" type="button" hidden>✨ Rivedi la frase di oggi</button>
+
+        <div class="riepilogo-breve" id="riepilogo-breve"></div>
+      </section>
+
+      <!-- ============ STORICO ============ -->
+      <section id="vista-storico" class="vista" data-vista="storico" hidden>
+        <header class="testata testata--piccola">
+          <h1 class="titolo-pagina">Storico</h1>
+        </header>
+
+        <div class="scheda">
+          <div class="calendario-nav">
+            <button class="icona-btn" id="mese-prec" type="button" aria-label="Mese precedente">‹</button>
+            <h2 class="calendario-titolo" id="calendario-titolo">—</h2>
+            <button class="icona-btn" id="mese-succ" type="button" aria-label="Mese successivo">›</button>
+          </div>
+          <div class="calendario-intestazione" aria-hidden="true">
+            <span>L</span><span>M</span><span>M</span><span>G</span><span>V</span><span>S</span><span>D</span>
+          </div>
+          <div class="calendario" id="calendario" role="grid"></div>
+          <p class="suggerimento">Tocca un giorno per valutarlo o modificarlo.</p>
+        </div>
+
+        <div class="scheda">
+          <h2 class="scheda-titolo" id="stat-titolo">Questo mese</h2>
+          <div class="statistiche" id="statistiche"></div>
+        </div>
+
+        <div class="scheda">
+          <h2 class="scheda-titolo">Ultimi giorni</h2>
+          <ul class="elenco" id="elenco"></ul>
+        </div>
+      </section>
+
+      <!-- ============ IMPOSTAZIONI ============ -->
+      <section id="vista-impostazioni" class="vista" data-vista="impostazioni" hidden>
+        <header class="testata testata--piccola">
+          <h1 class="titolo-pagina">Impostazioni</h1>
+        </header>
+
+        <div class="scheda" id="scheda-installa" hidden>
+          <h2 class="scheda-titolo">📲 Aggiungi alla schermata Home</h2>
+          <div id="istruzioni-installa"></div>
+        </div>
+
+        <div class="scheda">
+          <h2 class="scheda-titolo">🔔 Promemoria mattutino</h2>
+          <div id="notifiche-stato"></div>
+        </div>
+
+        <div class="scheda">
+          <h2 class="scheda-titolo">💾 I tuoi dati</h2>
+          <p class="testo-secondario">I dati restano solo su questo dispositivo. Esporta un backup ogni tanto per non perderli.</p>
+          <div class="riga-bottoni">
+            <button class="btn btn--secondario" id="btn-esporta" type="button">Esporta backup</button>
+            <label class="btn btn--secondario" for="file-importa">Importa backup</label>
+            <input type="file" id="file-importa" accept="application/json,.json" hidden>
+          </div>
+          <button class="btn btn--pericolo btn--blocco" id="btn-cancella" type="button">Cancella tutti i dati</button>
+        </div>
+
+        <p class="versione" id="versione"></p>
+      </section>
+    </main>
+
+    <!-- Barra di navigazione -->
+    <nav class="navbar" aria-label="Navigazione principale">
+      <a href="#oggi" class="navbar__voce" data-vai="oggi">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg>
+        <span>Oggi</span>
+      </a>
+      <a href="#storico" class="navbar__voce" data-vai="storico">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
+        <span>Storico</span>
+      </a>
+      <a href="#impostazioni" class="navbar__voce" data-vai="impostazioni">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg>
+        <span>Impostazioni</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Foglio per valutare un giorno dallo storico -->
+  <div class="foglio-sfondo" id="foglio" hidden>
+    <div class="foglio" role="dialog" aria-modal="true" aria-labelledby="foglio-titolo">
+      <div class="foglio__maniglia" aria-hidden="true"></div>
+      <h2 class="foglio__titolo" id="foglio-titolo">—</h2>
+      <div class="foglio__scelte">
+        <button class="mini-scelta mini-scelta--verde" data-valore="verde" type="button">Positiva</button>
+        <button class="mini-scelta mini-scelta--giallo" data-valore="giallo" type="button">Normale</button>
+        <button class="mini-scelta mini-scelta--rosso" data-valore="rosso" type="button">Negativa</button>
+      </div>
+      <div class="riga-bottoni">
+        <button class="btn btn--secondario" id="foglio-rimuovi" type="button">Rimuovi valutazione</button>
+        <button class="btn btn--primario" id="foglio-chiudi" type="button">Chiudi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Schermata finale dopo la conferma -->
+  <div class="finale" id="finale" role="dialog" aria-modal="true" aria-labelledby="finale-intro" hidden>
+    <div class="finale__contenuto">
+      <svg class="finale__spunta" viewBox="0 0 52 52" aria-hidden="true">
+        <circle cx="26" cy="26" r="23"/>
+        <path d="M15.5 27.5l7 7 14-15"/>
+      </svg>
+      <p class="finale__intro" id="finale-intro">Perfetto, ti auguro la migliore delle giornate e ricorda</p>
+      <blockquote class="finale__frase" id="finale-frase"></blockquote>
+      <button class="finale__btn" id="finale-chiudi" type="button">Inizia la giornata</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="frasi.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
