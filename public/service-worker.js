@@ -7,7 +7,7 @@
 
 // ⚠️ Cambia questo numero ogni volta che modifichi un file dell'app,
 // così i telefoni scaricano la nuova versione.
-const VERSIONE_CACHE = 'comeandata-v3';
+const VERSIONE_CACHE = 'comeandata-v4';
 
 const FILE_APP = [
   './',
